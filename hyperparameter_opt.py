@@ -18,7 +18,7 @@ def objective(trial):
     scan_dataset = du.PosDataDatset('../../Data/robo_steer/raw/', 200)
     train_size = int(0.8 * len(scan_dataset))
     test_size = len(scan_dataset) - train_size
-    train_dataset, test_dataset = tdu.random_split(scan_dataset, [train_size, test_size])
+    train_dataset, test_dataset = tdu.random_split(scan_dataset, [train_size, test_size], torch.Generator().manual_seed(42))
 
     batch_size = trial.suggest_categorical('batch_size', [16, 32, 64])
     mlflow.log_param('batch_size', batch_size)
@@ -64,14 +64,12 @@ def objective(trial):
             mlflow.end_run()
             raise optuna.exceptions.TrialPruned()
 
-    """
     if use_cnn:
         torch.save(model.state_dict(), f'models/cnn.ckpt')
         mlflow.log_artifact(f'models/cnn.ckpt')
     else:
         torch.save(model.state_dict(), f'models/mlp_{hidden_size}_{num_layers}.ckpt')
         mlflow.log_artifact(f'models/mlp_{hidden_size}_{num_layers}.ckpt')
-    """
 
     mlflow.end_run()
     return np.min(losses)
@@ -80,3 +78,11 @@ if __name__ == '__main__':
     mlflow.set_experiment('HyperOpt')
     study = optuna.create_study(direction="minimize")
     study.optimize(objective, n_trials=500, catch=())
+    print("Best trial:")
+    trial = study.best_trial
+
+    print("  Value: ", trial.value)
+
+    print("  Params: ")
+    for key, value in trial.params.items():
+        print("    {}: {}".format(key, value))

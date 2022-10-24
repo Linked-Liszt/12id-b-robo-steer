@@ -20,6 +20,8 @@ class PosData():
 def read_pos_dat(dat_fp: str) -> PosData:
     with open(dat_fp, 'r') as dat_f:
         pos_readings = []
+        usr_pos = -1
+        usr_read = -1
         for i, line in enumerate(dat_f):
             if i == 0:
                 usr_pos = float(line.split(' ')[USR_SEL_IDX][:-1].strip())
