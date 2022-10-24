@@ -1,6 +1,7 @@
 .loglogin
 .ipynb_checkpoints
 __pycache__
+.vscode
 
 mlruns
 models

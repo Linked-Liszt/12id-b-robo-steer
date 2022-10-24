@@ -21,10 +21,6 @@ class Trainer():
             self.optimizer.zero_grad()
             outputs = self.model(reading)
             loss = self.criterion(outputs, labels)
-            if loss.item() > 0.6:
-                print(idxs)
-                print(labels)
-                raise ValueError
             mlflow.log_metric('loss', loss.item(), self.mlflow_step)
             loss.backward()
             self.optimizer.step()
