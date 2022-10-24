@@ -32,6 +32,6 @@ def plot_diff_hist(model, dataset: du.PosDataDatset, ds_subset):
             model_pred = model(torch.Tensor(scan.reads)).item()
         diffs.append(np.abs(model_pred - scan.usr_pos))
 
-    ax.hist(diffs)
+    ax.hist(diffs, bins=20, range=(0.0, 2.0))
     return fig
     
