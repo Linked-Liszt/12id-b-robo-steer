@@ -10,7 +10,7 @@ class HistInfo():
     bin_sizes: np.ndarray
     bins: np.ndarray
 
-def graph_sample(model, dataset: du.PosDataDatset, ds_subset):
+def graph_sample(model, dataset: du.PosDataDataset, ds_subset):
     fig, axs = plt.subplots(5, 5)
     fig.set_size_inches(10, 5)
     idxs = list(range(len(ds_subset.indices)))
@@ -29,7 +29,7 @@ def graph_sample(model, dataset: du.PosDataDatset, ds_subset):
     return fig
 
 
-def graph_ers(model, dataset: du.PosDataDatset, ds_subset, high=True):
+def graph_ers(model, dataset: du.PosDataDataset, ds_subset, high=True):
     fig, axs = plt.subplots(5, 5)
     fig.set_size_inches(10, 5)
     idxs = list(range(len(ds_subset.indices)))
@@ -59,7 +59,7 @@ def graph_ers(model, dataset: du.PosDataDatset, ds_subset, high=True):
     return fig
 
 
-def plot_diff_hist(model, dataset: du.PosDataDatset, ds_subset):
+def plot_diff_hist(model, dataset: du.PosDataDataset, ds_subset):
     fig, ax = plt.subplots()
 
     diffs = []
@@ -82,3 +82,10 @@ def print_hist_info(hist_info: HistInfo) -> None:
             print(f'Err Range {hist_info.bins[i]:.2f}-{hist_info.bins[i+1]:.2f}: '
                   + f'{round(hist_info.bin_sizes[i])} {hist_info.bin_sizes[i] / total_count * 100:.2f}%')
 
+
+def plot_scans(scan_list):
+    fig, ax = plt.subplots(len(scan_list))
+    for ax, scan in zip(ax, scan_list):
+        ax.plot(scan.pos, scan.reads)
+        ax.plot(scan.usr_pos, scan.usr_read, marker='o')
+    return fig

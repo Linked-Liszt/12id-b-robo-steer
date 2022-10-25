@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 def objective(trial):
     mlflow.start_run()
-    scan_dataset = du.PosDataDatset('../../Data/robo_steer/raw/', 200)
+    scan_dataset = du.PosDataDataset('../../Data/robo_steer/raw/', 200)
     train_size = int(0.8 * len(scan_dataset))
     test_size = len(scan_dataset) - train_size
     train_dataset, test_dataset = tdu.random_split(scan_dataset, [train_size, test_size], torch.Generator().manual_seed(42))
