@@ -1,7 +1,7 @@
-import utils.data as du
-import utils.plots as pu
-import utils.training as tu
-import utils.models as models
+import robosteer12idb.data as du
+import robosteer12idb.plots as pu
+import robosteer12idb.training as tu
+import robosteer12idb.models as models
 
 import torch.nn as nn
 import torch.nn.functional as F
