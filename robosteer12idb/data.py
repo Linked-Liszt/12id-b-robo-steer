@@ -17,6 +17,8 @@ class PosData():
     usr_read: float
     pos: np.ndarray
     reads: np.ndarray
+    min_pos: float
+    max_pos: float
 
 class PosDataDataset(Dataset):
     def __init__(self, dataset_fp: str, num_readings: int, import_scans=None):
@@ -57,7 +59,22 @@ def read_pos_dat(dat_fp: str) -> PosData:
             else:
                 pos_readings.append([float(raw_num.strip()) for raw_num in line.split(',')])
         pos_readings = np.asarray(pos_readings)
-    return PosData(dat_fp, usr_pos, usr_read, pos_readings[:,0], pos_readings[:,1])
+    return PosData(dat_fp, usr_pos, usr_read, pos_readings[:,0], pos_readings[:,1], np.min(pos_readings[:,0]), np.max(pos_readings[:,0]))
+
+# To read data with any format
+def read_dat(dat_fp: str) -> PosData:
+    with open(dat_fp, 'r') as dat_f:
+        pos_readings = []
+        usr_pos = -1
+        usr_read = -1
+        for i, line in enumerate(dat_f):
+            if i==0 and line[0]=="%":
+                usr_pos = float(line.split(' ')[USR_SEL_IDX][:-1].strip())
+                usr_read = float(line.split(' ')[USR_READ_IDX][:-1].strip())
+            else:
+                pos_readings.append([float(raw_num.strip()) for raw_num in line.split(',')])
+        pos_readings = np.asarray(pos_readings)
+    return PosData(dat_fp, usr_pos, usr_read, pos_readings[:,0], pos_readings[:,1], np.min(pos_readings[:,0]), np.max(pos_readings[:,0]))
 
 
 def get_all_data_fp(dataset_fp: str) -> List[str]:
@@ -81,9 +98,11 @@ def rescale_scan(scan: PosData, num_readings: int) -> PosData:
     pos_interp = 2 * ((pos_interp - np.min(pos_interp))/np.ptp(pos_interp)) - 1
     read_interp = 2 * ((read_interp - np.min(read_interp))/np.ptp(read_interp)) - 1
 
-    return PosData(scan.fp, usr_val_interp, usr_read_interp, pos_interp, read_interp)
+    return PosData(scan.fp, usr_val_interp, usr_read_interp, pos_interp, read_interp, scan.min_pos, scan.max_pos)
 
-
+# scale scan.pos back to the user's scale.
+def scaleback(scan: PosData, newpos: float) -> float:
+    return (newpos+1)/2*(scan.max_pos-scan.min_pos)+scan.min_pos
 
 
 def roll_augment_data(ds_subset, dataset, num_augs, pot_rot):
@@ -101,6 +120,6 @@ def roll_augment_data(ds_subset, dataset, num_augs, pot_rot):
                 usr_pos -= 1
             elif usr_pos < -1.0:
                 usr_pos += 1
-            aug_set.append(PosData(scan.fp, usr_pos, scan.usr_read, scan.pos, reads))
+            aug_set.append(PosData(scan.fp, usr_pos, scan.usr_read, scan.pos, reads, np.min(scan.pos), np.max(scan.pos)))
 
     return PosDataDataset('', 200, aug_set)
