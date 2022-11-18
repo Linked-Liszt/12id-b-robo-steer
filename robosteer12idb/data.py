@@ -76,6 +76,9 @@ def read_dat(dat_fp: str) -> PosData:
         pos_readings = np.asarray(pos_readings)
     return PosData(dat_fp, usr_pos, usr_read, pos_readings[:,0], pos_readings[:,1], np.min(pos_readings[:,0]), np.max(pos_readings[:,0]))
 
+def set_dat(x:float, y:float) -> PosData:
+    scan = PosData("", -1, -1, x, y, np.min(x), np.max(x))
+    return scan
 
 def get_all_data_fp(dataset_fp: str) -> List[str]:
     all_scans = []
