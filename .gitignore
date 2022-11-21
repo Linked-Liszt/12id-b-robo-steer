@@ -3,6 +3,9 @@
 __pycache__
 .vscode
 *.egg-info
+.history
+build
+*.pyc
 
 mlruns
 models
