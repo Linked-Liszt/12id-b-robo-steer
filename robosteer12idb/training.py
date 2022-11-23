@@ -2,6 +2,11 @@ import mlflow
 import torch
 
 class Trainer():
+    """
+    Generic training harness for a pytorch
+    Consecutive calls to train will automatically log
+    results to mlflow and keep track of latest steps/epochs.
+    """
     def __init__(self, train_loader, test_loader, model, optimizer, criterion):
         self.train_loader = train_loader
         self.test_loader = test_loader
